@@ -15,15 +15,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid()) // Changed to String with uuid() default
   username  String   @unique
-  password  String 
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Department {
-  id             Int            @id @default(autoincrement())
+  id             String         @id @default(uuid()) // Changed to String with uuid() default
   name           String
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -31,10 +31,10 @@ model Department {
 }
 
 model SubDepartment {
-  id           Int        @id @default(autoincrement())
+  id           String     @id @default(uuid()) // Changed to String with uuid() default
   name         String
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  departmentId Int
+  departmentId String // Changed to String
 }
