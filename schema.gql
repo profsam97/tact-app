@@ -16,24 +16,37 @@ input CreateSubDepartmentInput {
   name: String!
 }
 
-type Department {
+type DepartmentType {
   id: String!
   name: String!
-  subDepartments: [SubDepartment!]
+  subDepartments: [SubDepartment]
 }
 
 type Mutation {
-  createDepartment(input: CreateDepartmentInput!): Department!
+  createDepartment(input: CreateDepartmentInput!): DepartmentType!
   createSubDepartment(input: CreateSubDepartmentInput!): SubDepartment!
-  deleteDepartment(id: String!): Department!
+  deleteDepartment(id: String!): DepartmentType!
   deleteSubDepartment(id: String!): SubDepartment!
-  updateDepartment(input: UpdateDepartmentInput!): Department!
+  updateDepartment(input: UpdateDepartmentInput!): DepartmentType!
   updateSubDepartment(input: UpdateSubDepartmentInput!): SubDepartment!
 }
 
+type PaginatedDepartmentResponse {
+  items: [DepartmentType!]!
+  totalCount: Int!
+}
+
+input PaginationInput {
+  """Number of items to skip"""
+  skip: Int = 0
+
+  """Number of items to take"""
+  take: Int = 10
+}
+
 type Query {
-  getDepartmentById(id: String!): Department
-  getDepartments: [Department!]!
+  getDepartmentById(id: String!): DepartmentType
+  getDepartments(pagination: PaginationInput): PaginatedDepartmentResponse!
   getSubDepartmentById(id: String!): SubDepartment
   getSubDepartments: [SubDepartment!]!
 }
