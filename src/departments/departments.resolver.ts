@@ -1,47 +1,35 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  ObjectType,
-  Field,
-} from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentInput } from './dto/create-department.dto';
 import { UpdateDepartmentInput } from './dto/update-department.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { SubDepartment } from '../common/graphql-types';
+import {
+  DepartmentType,
+  PaginationInput,
+  PaginatedDepartmentResponse,
+} from '../common/graphql-types';
 
-@ObjectType()
-export class Department {
-  @Field(() => String)
-  id: string;
-
-  @Field()
-  name: string;
-
-  @Field(() => [SubDepartment], { nullable: true })
-  subDepartments?: SubDepartment[];
-}
-
-@Resolver(() => Department)
-@UseGuards(JwtAuthGuard) // Protect all resolver methods with the JWT guard
+@Resolver(() => DepartmentType)
+@UseGuards(JwtAuthGuard)
 export class DepartmentsResolver {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
-  @Query(() => [Department], { name: 'getDepartments' })
-  async getDepartments() {
-    console.log('Fetching all departments');
-    return this.departmentsService.getDepartments();
+  @Query(() => PaginatedDepartmentResponse, { name: 'getDepartments' })
+  async getDepartments(
+    @Args('pagination', { type: () => PaginationInput, nullable: true })
+    pagination: PaginationInput,
+  ) {
+    const effectivePagination = pagination ?? { skip: 0, take: 10 };
+    return this.departmentsService.getDepartments(effectivePagination);
   }
 
-  @Query(() => Department, { name: 'getDepartmentById', nullable: true }) // Add new query
+  @Query(() => DepartmentType, { name: 'getDepartmentById', nullable: true })
   async getDepartmentById(@Args('id', { type: () => String }) id: string) {
     return this.departmentsService.getDepartmentById(id);
   }
 
-  @Mutation(() => Department)
+  @Mutation(() => DepartmentType)
   async createDepartment(
     @Args('input', { type: () => CreateDepartmentInput })
     createDepartmentInput: CreateDepartmentInput,
@@ -51,7 +39,7 @@ export class DepartmentsResolver {
     );
   }
 
-  @Mutation(() => Department)
+  @Mutation(() => DepartmentType)
   async updateDepartment(
     @Args('input', { type: () => UpdateDepartmentInput })
     updateDepartmentInput: UpdateDepartmentInput,
@@ -61,7 +49,7 @@ export class DepartmentsResolver {
     );
   }
 
-  @Mutation(() => Department)
+  @Mutation(() => DepartmentType)
   async deleteDepartment(@Args('id', { type: () => String }) id: string) {
     return this.departmentsService.deleteDepartment(id);
   }
