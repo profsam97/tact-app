@@ -30,6 +30,12 @@ export class Department {
 export class DepartmentsResolver {
   constructor(private readonly departmentsService: DepartmentsService) {}
 
+  @Query(() => [Department], { name: 'getDepartments' })
+  async getDepartments() {
+    console.log('Fetching all departments');
+    return this.departmentsService.getDepartments();
+  }
+
   @Query(() => Department, { name: 'getDepartmentById', nullable: true }) // Add new query
   async getDepartmentById(@Args('id', { type: () => String }) id: string) {
     return this.departmentsService.getDepartmentById(id);
