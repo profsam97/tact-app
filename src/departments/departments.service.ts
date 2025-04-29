@@ -3,6 +3,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateDepartmentSchema } from './dto/create-department.dto';
 import { UpdateDepartmentSchema } from './dto/update-department.dto';
 import { Department, SubDepartment } from '@prisma/client';
+import {
+  PaginationInput,
+  PaginatedDepartmentResponse,
+} from '../common/graphql-types'; // Import pagination types
 
 @Injectable()
 export class DepartmentsService {
@@ -34,14 +38,26 @@ export class DepartmentsService {
     });
   }
 
-  async getDepartments(): Promise<
-    (Department & { subDepartments: SubDepartment[] })[]
-  > {
-    return this.prisma.department.findMany({
-      include: {
-        subDepartments: true,
-      },
-    });
+  async getDepartments(
+    pagination: PaginationInput,
+  ): Promise<PaginatedDepartmentResponse> {
+    const { take = 10, skip = 0 } = pagination; // Default values if not provided
+    const [items, totalCount] = await this.prisma.$transaction([
+      this.prisma.department.findMany({
+        take,
+        skip,
+        include: {
+          subDepartments: true,
+        },
+        orderBy: {
+          // Optional: Add default sorting if desired
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.department.count(), // Get total count of departments
+    ]);
+
+    return { items, totalCount };
   }
 
   async updateDepartment(data: UpdateDepartmentSchema): Promise<Department> {
