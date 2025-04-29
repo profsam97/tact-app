@@ -1,0 +1,54 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateDepartmentInput {
+  name: String!
+  subDepartments: [CreateEmbeddedSubDepartmentInput!]
+}
+
+input CreateEmbeddedSubDepartmentInput {
+  name: String!
+}
+
+input CreateSubDepartmentInput {
+  departmentId: String!
+  name: String!
+}
+
+type Department {
+  id: String!
+  name: String!
+  subDepartments: [SubDepartment!]
+}
+
+type Mutation {
+  createDepartment(input: CreateDepartmentInput!): Department!
+  createSubDepartment(input: CreateSubDepartmentInput!): SubDepartment!
+  deleteDepartment(id: String!): Department!
+  deleteSubDepartment(id: String!): SubDepartment!
+  updateDepartment(input: UpdateDepartmentInput!): Department!
+  updateSubDepartment(input: UpdateSubDepartmentInput!): SubDepartment!
+}
+
+type Query {
+  getDepartmentById(id: String!): Department
+  getSubDepartmentById(id: String!): SubDepartment
+  getSubDepartments: [SubDepartment!]!
+}
+
+type SubDepartment {
+  departmentId: String!
+  id: String!
+  name: String!
+}
+
+input UpdateDepartmentInput {
+  id: String!
+  name: String
+}
+
+input UpdateSubDepartmentInput {
+  id: String!
+  name: String
+}
