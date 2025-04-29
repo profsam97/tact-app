@@ -33,6 +33,7 @@ type Mutation {
 
 type Query {
   getDepartmentById(id: String!): Department
+  getDepartments: [Department!]!
   getSubDepartmentById(id: String!): SubDepartment
   getSubDepartments: [SubDepartment!]!
 }
